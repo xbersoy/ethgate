@@ -36,7 +36,7 @@ module.exports.getTransactionsBetweenTwoBlocks = async (startBlock, endBlock) =>
     const batch = new web3.eth.BatchRequest();
     const blockNumbers = getBlockNumbers(startBlock, endIndex);
     let counter = 0;
-    var allBlocksTransactions = [];
+    let allBlocksTransactions = [];
     let currentBlocksTransactions = [];
 
     await new Promise(function (resolve, reject) {
@@ -71,7 +71,7 @@ module.exports.getTransactionsBetweenTwoBlocks = async (startBlock, endBlock) =>
 }
 
 function getBlockNumbers(start, end) {
-    var blockNumbers = [];
+    let blockNumbers = [];
     for (let i = parseInt(start, 10); i <= parseInt(end, 10); i++) {
         blockNumbers.push(i);
     }
