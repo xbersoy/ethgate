@@ -8,7 +8,7 @@ const errorHandler = require('../middlewares/errorHandler');
 router.post(
   '/transaction/createAndSend',
   async (req, res, next) => {
-    errorHandler.async(req, res, next, txController.createAndSend(req));
+    errorHandler.async(req, res, next, txController.createAndSend(req.body));
   },
 );
 
@@ -18,7 +18,7 @@ router.post(
 router.get(
   '/transaction/getTransactionsBetweenTwoBlocks',
   async (req, res, next) => {
-    errorHandler.async(req, res, next, txController.getTransactionsBetweenTwoBlocks(req));
+    errorHandler.async(req, res, next, txController.getTransactionsBetweenTwoBlocks(req.query));
   },
 );
 

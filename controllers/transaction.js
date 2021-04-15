@@ -1,13 +1,13 @@
 const txService = require('../services/transaction')
 
-exports.createAndSend = async (req) => {
-    const {senderKey, address, amount} = req.body;
+exports.createAndSend = async (requestBody) => {
+    const {senderKey, address, amount} = requestBody;
     const txObject = await txService.brodcastTransaction(senderKey, address, amount);
     return txObject;
 };
 
-exports.getTransactionsBetweenTwoBlocks = async (req) => {
-    const {startBlock, endBlock} = req.query;
+exports.getTransactionsBetweenTwoBlocks = async (requestParameters) => {
+    const {startBlock, endBlock} = requestParameters;
     const transactions = await txService.getTransactionsBetweenTwoBlocks(startBlock, endBlock);
     return transactions;
 };

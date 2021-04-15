@@ -1,46 +1,15 @@
+const Tx = require('ethereumjs-tx');
+const privateKeyToAddress = require('ethereum-private-key-to-address');
 const Web3 = require('web3');
 const ethClient = require('../ethClient');
-const { async } = require('../middlewares/errorHandler');
 const web3 = ethClient(Web3);
-const Tx = require('ethereumjs-tx');
-
-
-const createTransaction = async (toAddress, amount) => {
-
-    var nonce = await web3.eth.getTransactionCount('0x1B5fB633A957AA72ACD8DBbE2e9d45bF45845011', 'pending');
-
-    var rawTx = {
-        nonce: web3.utils.toHex(nonce),
-        to: toAddress,
-        gasPrice: web3.utils.toHex(20000000000),
-        gasLimit: web3.utils.toHex(800000),
-        value: web3.utils.toHex(amount)
-    }
-
-    return rawTx;
-}
-
-seriliazeTransaction = (txObject) => {
-    return txObject.serialize();
-}
-
-signTransaction = (txObject, senderPK) => {
-    return txObject.sign(senderPK);
-}
-
-sendTransaction = async (txObject) => {
-    const sentTx = await web3.eth.sendSignedTransaction('0x' + txObject.toString('hex'));
-    return sentTx;
-}
-
 
 module.exports.brodcastTransaction = async (senderKey, toAddress, amount) => {
     try {
-
-        var privateKey = Buffer.from(senderKey.substring(2), 'hex');
-        var nonce = await web3.eth.getTransactionCount('0x1B5fB633A957AA72ACD8DBbE2e9d45bF45845011', 'pending');
-
-        var rawTx = {
+        const privateKey = Buffer.from(senderKey.substring(2), 'hex');
+        const senderAddress = privateKeyToAddress(senderKey);
+        const nonce = await web3.eth.getTransactionCount(senderAddress, 'pending');
+        const rawTx = {
             nonce: web3.utils.toHex(nonce),
             to: toAddress,
             gasPrice: web3.utils.toHex(20000000000),//web3.utils.toHex(gasPrice),
@@ -48,62 +17,27 @@ module.exports.brodcastTransaction = async (senderKey, toAddress, amount) => {
             value: web3.utils.toHex(amount)
         }
 
-        var tx = new Tx(rawTx, { chain: 'goerli' });
+        const tx = new Tx(rawTx, { chain: 'goerli' });
 
         tx.sign(privateKey);
-        var serializedTx = tx.serialize();
-        var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
+
+        const serializedTx = tx.serialize();
+
+        const receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
 
         return { txHash: receipt.transactionHash };
-
     } catch (error) {
         throw error;
     }
-}
-
-
-
-
-
-
-
-
-
-
-
-async function checkTransactions() {
-    try {
-        console.log(`[*] Searching block ${block.number}...`);
-        if (block && block.transactions) {
-            for (let txHash of block.transactions) {
-                let tx = await web3.eth.getTransaction(txHash)
-                if (account === tx.to.toLowerCase()) {
-                    console.log(`[+] Transaction found on block ${lastBlockNumber}`)
-                    console.log({
-                        address: tx.from,
-                        value: web3.utils.fromWei(tx.value, 'ether'),
-                        timestamp: new Date()
-                    })
-                }
-            }
-        }
-    } catch (error) {
-        throw error;
-    }
-}
-
-async function getLastBlock() {
-    return await web3.eth.getBlock('latest');
 }
 
 module.exports.getTransactionsBetweenTwoBlocks = async (startBlock, endBlock) => {
-    var endIndex = endBlock === undefined ? await web3.eth.getBlockNumber() : endBlock;
-    var batch = new web3.eth.BatchRequest();
-    var blockss = [];
-    let blockNumbers = getBlockNumbers(startBlock, endIndex);
+    const endIndex = endBlock === undefined ? await web3.eth.getBlockNumber() : endBlock;
+    const batch = new web3.eth.BatchRequest();
+    const blockNumbers = getBlockNumbers(startBlock, endIndex);
     let counter = 0;
-    var total = blockNumbers.length;
-    var blocks = [];
+    var allBlocksTransactions = [];
+    let currentBlocksTransactions = [];
 
     await new Promise(function (resolve, reject) {
 
@@ -113,7 +47,7 @@ module.exports.getTransactionsBetweenTwoBlocks = async (startBlock, endBlock) =>
                     if (error) return reject(error);
                     counter++;
 
-                    blocks = data.transactions.map(transaction => {
+                    currentBlocksTransactions = data.transactions.map(transaction => {
                         return {
                             from: transaction.from,
                             to: transaction.to,
@@ -123,9 +57,9 @@ module.exports.getTransactionsBetweenTwoBlocks = async (startBlock, endBlock) =>
                             blockNumber: transaction.blockNumber
                         }
                     });
-                    blockss = [...blockss, ...blocks];
+                    allBlocksTransactions = [...allBlocksTransactions, ...currentBlocksTransactions];
 
-                    if (counter === total) resolve();
+                    if (counter === blockNumbers.length) resolve();
                 })
             )
         });
@@ -133,7 +67,7 @@ module.exports.getTransactionsBetweenTwoBlocks = async (startBlock, endBlock) =>
         batch.execute()
     });
 
-    return blockss;
+    return allBlocksTransactions;
 }
 
 function getBlockNumbers(start, end) {
