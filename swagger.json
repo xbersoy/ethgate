@@ -190,7 +190,7 @@
           "schema": {
             "type": "number",
             "minimum": 0,
-            "maximum": 500000,
+            "maximum": 500000000,
             "example": 4613300
           },
           "description": "start block"
@@ -202,7 +202,7 @@
           "schema": {
             "type": "number",
             "minimum": 0,
-            "maximum": 500000,
+            "maximum": 500000000,
             "example": 4613333
           },
           "description": "end block"
