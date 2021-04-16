@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const txRoute = require('./routes/transaction.js');
 const walletRoute = require('./routes/wallet.js');
-// const swaggerRoutes = require('./routes/swagger.js');
+const swaggerRoutes = require('./routes/swagger.js');
 const notFoundRoute = require('./routes/notFound.js');
 
 app.use(express.json());
@@ -13,7 +13,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(txRoute);
 app.use(walletRoute);
-// app.use(swaggerRoutes);
+app.use(swaggerRoutes);
 app.use(notFoundRoute);
 
 app.use((err, req, res, next) => {

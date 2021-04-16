@@ -1,0 +1,261 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Ethereum Gateway",
+      "description": "<img src=\"https://theme.zdassets.com/theme_assets/1357002/f1907c089430c4cdfeed126a5f0ff5b4492d129b.png\" ></br>",
+      "version": "1.0.0",
+      "contact": {
+        "name": "Source Code",
+        "url": "https://github.com/xbersoy/ethgate"
+      }
+    },
+    "servers": [
+      {
+        "url": "http://ec2-3-141-198-45.us-east-2.compute.amazonaws.com:3030/"
+      }
+    ],
+    "paths": {
+      "/wallet/create": {
+        "get": {
+          "tags": [
+            "Wallet"
+          ],
+          "summary": "Returns the created wallet",
+          "responses": {
+            "200": {
+              "description": "Successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "privateKey": {
+                            "type": "string",
+                            "example": "0xa5cd7927083291e5dc1738b8794b7a5ca4acbab345805630e087f5ca01dfce59"
+                          },
+                          "address": {
+                            "type": "string",
+                            "example": "0x12a189dD1726200E5e90559cab66Dd18A5A23398"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/tansaction/createAndSend": {
+        "post": {
+          "tags": [
+            "Transactions"
+          ],
+          "summary": "Creates transaction object with given parameters. Signs and sends tx to the Network (Goerli Testnet)",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "senderKey": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "amount": {
+                      "type": "integer"
+                    }
+                  },
+                  "example": {
+                    "senderKey": "0xf0612c2b8950ecbf5bb34661dab5c2579c974fdf62422d0a045dc5a19b58c371",
+                    "address": "0x9D9dcE4cb5B796Dc6E3d00457D276Abe81c8491c",
+                    "amount": 2
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "txHash": {
+                            "type": "string",
+                            "example": "0xf132a9bf86631e692c17b1c2d0dee65631eae8238a3d9b247b01f4cbd5787d1c"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/tansaction/getTransactionsBetweenTwoBlocks": {
+        "get": {
+          "tags": [
+            "Trips"
+          ],
+          "summary": "Returns transaction object between given two blocks as query parameter",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/startBlock"
+            },
+            {
+              "$ref": "#/components/parameters/endBlock"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string",
+                              "example": "0x1D4c8636dF248D2c585a56e948E4fF805aC227c5"
+                            },
+                            "to": {
+                              "type": "string",
+                              "example": "0x9202584Ac2A5081C6d1F27d637d1DD1Fb2AEc6B7"
+                            },
+                            "amount": {
+                              "type": "string",
+                              "example": "0.298223694011240155"
+                            },
+                            "token": {
+                              "type": "string",
+                              "example": "ETH"
+                            },
+                            "timestamp": {
+                              "type": "number",
+                              "example": 1618337461
+                            },
+                            "blockNumber": {
+                              "type": "number",
+                              "example": 4613300
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "parameters": {
+        "startBlock": {
+          "in": "query",
+          "name": "startBlock",
+          "required": true,
+          "schema": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 500000,
+            "example": 4613300
+          },
+          "description": "start block"
+        },
+        "endBlock": {
+          "in": "query",
+          "name": "endBlock",
+          "required": false,
+          "schema": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 500000,
+            "example": 4613333
+          },
+          "description": "end block"
+        }
+      },
+      "schemas": {
+        "SuccessfulResponseWithoutData": {
+          "type": "object",
+          "title": "Successful Response",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "default": true,
+              "example": true
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "required": [
+            "returnCode"
+          ]
+        },
+        "Error": {
+          "type": "object",
+          "title": "Error Response",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "default": false,
+              "example": false
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "Error in a query parameter"
+                  },
+                  "param": {
+                    "type": "string",
+                    "example": "longitude"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
