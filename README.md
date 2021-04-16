@@ -112,7 +112,7 @@ Success
 
 ### GET /transaction/getTransactionsBetweenTwoBlocks
 
-Returns private key and public address of generated wallet.
+Returns transaction objects between given blocks.
 <br><br>
 
 Sample Query Parameters (/transaction/getTransactionsBetweenTwoBlocks?startBlock=4613300&endBlock=4613333)
@@ -131,9 +131,22 @@ Success
 ```bash
 {
     "success": true,
-    "data": {
-        "privateKey": "0xecf508229eb793cb1591572bbc8836d4aa96040c9373a66d144265c229859880",
-        "address": "0x0d338D4006F70BE9C9fD8a2466C115945a0F402F"
-    }
+    "data": [
+        {
+            "from": "0x1D4c8636dF248D2c585a56e948E4fF805aC227c5",
+            "to": "0x9202584Ac2A5081C6d1F27d637d1DD1Fb2AEc6B7",
+            "amount": "0.298223694011240155",
+            "token": "ETH",
+            "timestamp": 1618337461,
+            "blockNumber": 4613300
+        },
+        {
+            "from": "0x7b5956CA58fF0941eFbf89dFE0B56ED8576Cd332",
+            "to": "0x9202584Ac2A5081C6d1F27d637d1DD1Fb2AEc6B7",
+            "amount": "0.297679132164570337",
+            "token": "ETH",
+            "timestamp": 1618337461,
+            "blockNumber": 4613300
+        }]
 }
 ```
