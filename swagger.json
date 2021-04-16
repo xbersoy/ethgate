@@ -54,7 +54,7 @@
           }
         }
       },
-      "/tansaction/createAndSend": {
+      "/transaction/createAndSend": {
         "post": {
           "tags": [
             "Transactions"
@@ -114,7 +114,7 @@
           }
         }
       },
-      "/tansaction/getTransactionsBetweenTwoBlocks": {
+      "/transaction/getTransactionsBetweenTwoBlocks": {
         "get": {
           "tags": [
             "Trips"
